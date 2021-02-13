@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -37,12 +38,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
     'django.contrib.sites',  # Used by SM accounts, along with "SITE_ID", to allow user to log in from external sites with callbacks
-
     'allauth',
     'allauth.account',  # Allows manual login
     'allauth.socialaccount',  # Allows users to log in via external sites like FB or Google
+    'home'
 ]
 
 MIDDLEWARE = [
@@ -60,7 +60,10 @@ ROOT_URLCONF = 'CI_WebShop_Django.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            os.path.join(BASE_DIR, 'templates'),
+            os.path.join(BASE_DIR, 'templates', 'allauth')
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
