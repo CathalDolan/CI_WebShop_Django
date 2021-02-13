@@ -93,3 +93,13 @@ python3 manage.py runserver
     <meta htt-equiv="X-UA-Compatible" content="ie=edge">
 10. Cut script lines from the bottom and paste them beneath Bootstrap link and above "title" tags
 11. Add {% load static %} to the very top of the page
+12. Wrap the header elements in blocks for later reuse.
+    - {% block meta %}
+    - {% block corfecss %}
+    - {% block corejs %}
+13. Beneath each header block insert additional blocks to allow for addition of extras on later pages
+    - {% block extrameta %}
+    - {% block extracss %}
+    - {% block extrajs %}
+14. Add an extra title block inside the title
+    - <title>[title]{% block extr_title %}{% endblock %}</title>
