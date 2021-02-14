@@ -1,4 +1,5 @@
 python3 manage.py runserver
+Items inside [square brackets] should be named according to the project being worked upon
 
 # 1. Initial Set-up and Creating a Django Project
 
@@ -30,7 +31,6 @@ python3 manage.py runserver
     - Remove the 3 dots top and bottom
     - Copy from "INSTALLED_APPS":
         'django.contrib.sites',
-
         'allauth',
         'allauth.account',
         'allauth.socialaccount',
@@ -78,11 +78,18 @@ python3 manage.py runserver
         cp -r ../.pip-modules/lib/python3.8/site-packages/allauth/templates/* ./CI_WebShop_Django/templates/allauth
     - Removed any unrequired templates such as openid or tests
     - If not present, add a base.html file to the allauth folder
+    - Add "allauth" to the project templates. The root templates are also created at this point (this can also be done later, see 4.3.5). 
+        - Go to project settings.py
+        - Within "DIRS" in "TEMPLATES" add two paths:
+            os.path.join(BASE_DIR, 'templates'),
+            os.path.join(BASE_DIR, 'templates', 'allauth') 
 
-# 3 Set-up Base HTML's
+# 3 Set-up Project Base HTML
 
 1. Create a "base.html" file in the project folder
-2. Go to <https://getbootstrap.com/docs/5.0/getting-started/introduction/>
+2. Go to <https://getbootstrap.com/docs/4.6/getting-started/introduction/>
+    **Note**: Bootstrap 4 is employed as opposed to Bootstrap 5, because
+    some changes in the latter made the tutorial code unworkable.
 3. Navigate to "Starter Template" and copy complete
 4. Paste it into project base.html
 5. Make sure both Popper.js and Bootstrap JS are included and in this order (or combined)
@@ -95,11 +102,98 @@ python3 manage.py runserver
 11. Add {% load static %} to the very top of the page
 12. Wrap the header elements in blocks for later reuse.
     - {% block meta %}
-    - {% block corfecss %}
+    - {% block corecss %}
     - {% block corejs %}
 13. Beneath each header block insert additional blocks to allow for addition of extras on later pages
     - {% block extrameta %}
     - {% block extracss %}
     - {% block extrajs %}
-14. Add an extra title block inside the title
-    - <title>[title]{% block extr_title %}{% endblock %}</title>
+14. Add blocks and extra blocks within the body (All positioned beneath "header" tags)
+    - Title: <title>[title]{% block extr_title %}{% endblock %}</title>
+    - Page Header: {% blockpage_header %}
+    - Block Content: {% block content %}
+    - Extra JS: {% block postloadjs %}
+15. All blocks to include {% endblock %}
+
+# 4 Setup an App (Home in this example)
+
+## 4.1 Basic Creation
+1. Create the basic app:
+    python3 manage.py startapp [home]
+2. Create a templates directory within the new app:
+    mkdir -p [home]/templates/[home]
+
+## 4.2 Create basic html page
+1. Create home/index html file within inner app "[home]" folder
+2. In new file, add extend and load blocks at the top of the page
+    - {% extends "base.html" %}
+    - {% load static %}
+    - {% block content %}
+
+## 4.3 Create a View to render html template 
+1. Navigate to the App views.py
+2. Define a view (In this example for home/index)
+    def [index](request):
+        return render(request, '[home/index.html]')
+3. Create an App urls.py file
+    - Add the imports
+        from django.contrib import admin
+        from django.urls import path
+    - Create an empty path to indicate that this is the route URL and it's going to render views.index with the name of home
+        urlpatterns = [
+            path('', views.index, name='home'),
+        ]
+    - Import "views" from the current directory:
+        from . import views
+4. Add a path in the Project urls.py
+    - Go to project urls.py
+    - in "urlpatterns" beneath existing paths add:
+        path('', include('home.urls')),
+5. Add App to project settings and wire up template directories
+    - Go to project settings.py
+    - Under "INSTALLED_APPS" add '[home]'
+    - 2.4 "Copy allauth templates" can also be done here
+
+# 5 Setup Media & Static folders
+1. In project folder create a new sub-folder called "media"
+2. In project folder create a new sub-folder called "static"
+3. Within the static folder create another sub-folder called "css"
+4. Within the css folder, create a file base.css
+5. Add css link in base.html
+    - Within the "corecss" blocks and just before "endblock" add:
+        <link rel="stylesheet" href="{% static 'css/base.css' %}">
+6. Link up the "static" file:
+    - Go to settings.py
+    - Scroll to "STATIC_URL"
+    - Immediately beneath add the tuple:
+        STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
+    - **Note:** No "static route" added as it interferes with Amazon Web Services
+7. Link up the "media" file:
+    - Add a line space beneath "STATICFILES_DIRS" and add:
+        MEDIA_URL = '/media/'
+    - Immediately beneath that add:
+        MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+8. Allow Djnago to see the "media" files:
+    - Go to project urls.py and add to import the settings:
+        from django.conf import settings
+    -  Immediately beneath that, import the static function:
+        from django.conf.urls.static import static
+    - Use the static function to add "media" to our list of URL's:
+        - In "urlpatterns", on the same line as the closing square bracket add:
+            + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+
+# 6 Fonts & Icons
+Fonts based on Google Fonts and icons from Font Awesome
+## 6.1 Fonts
+    1. Navigate to fonts.google.com
+    2. Search for required font and open it
+    3. On right side of the screen, copy the"<link>" code
+    4. Go to "base.html" file and paste the link(s) in immediately beneath the Bootstrap link inside the "corecss" blocks
+## 6.2 Icons
+There is an option to create aFontawesome account. In this instance we'll use a cdn 
+    1. Go to https://cdnjs.com/libraries/font-awesome
+    2. Copy the latest file ending in "all.min.css"
+    3. Insert it at the top of the "corejs" in "base.html"
+    4. It should be encased in script tags, with a src and cross origin as per:
+        <script src="https://cdnjs.cloudflare......min.css" crossorigin="anonymous"></script>
