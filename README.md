@@ -154,6 +154,36 @@ Items inside [square brackets] should be named according to the project being wo
     - Under "INSTALLED_APPS" add '[home]'
     - 2.4 "Copy allauth templates" can also be done here
 
+## 4.4 Connecting to database
+
+If the app takes advantage of a database, additional actions are required.
+
+1. In the App folder, create a new folder called "fixtures"
+2. If there are existing Json fixture files, add them
+3. We need to create some "models" for the fixtures to go into:
+    - Go to App models.py
+    - Create class(es)
+4. Make migrations:
+    - Do a dry run first
+        python3 manage.py makemigrations --dry-run
+    - If necessary, install "pillow"
+        pip3 install pillow
+    - To make actual migrations
+        python3 manage.py makemigrations
+    - Run migrate with plan first to be sure all is OK
+        python3 manage.py migrate --plan
+    - If yes, run migrate
+        python3 manage.py migrate
+    - **Note**: It's best to specify which App the migrations are being done from. Above migrates all
+5. Register the model in App admin.py
+    - Go to App admin.py file
+    - Import the relevant mnodel
+        from .models import [model_name]
+    - Register it
+        admin.site.register([model_name])
+6. Load the fixtures data
+    python3 manage.py loaddata [fixture_jsonFile_name]
+
 # 5 Setup Media & Static folders
 1. In project folder create a new sub-folder called "media"
 2. In project folder create a new sub-folder called "static"
@@ -183,7 +213,7 @@ Items inside [square brackets] should be named according to the project being wo
             + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 
-# 6 Fonts & Icons
+# 6 Setup Fonts & Icons
 Fonts based on Google Fonts and icons from Font Awesome
 ## 6.1 Fonts
     1. Navigate to fonts.google.com
@@ -192,8 +222,6 @@ Fonts based on Google Fonts and icons from Font Awesome
     4. Go to "base.html" file and paste the link(s) in immediately beneath the Bootstrap link inside the "corecss" blocks
 ## 6.2 Icons
 There is an option to create aFontawesome account. In this instance we'll use a cdn 
-    1. Go to https://cdnjs.com/libraries/font-awesome
-    2. Copy the latest file ending in "all.min.css"
-    3. Insert it at the top of the "corejs" in "base.html"
-    4. It should be encased in script tags, with a src and cross origin as per:
-        <script src="https://cdnjs.cloudflare......min.css" crossorigin="anonymous"></script>
+    1. Go to https://www.codegrepper.com/code-examples/whatever/font+awesome+cdn
+    2. Copy the latest or your preferred link
+    3. Insert it immediately beneath the fonts link within the "corecss" blocks
