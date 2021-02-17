@@ -115,6 +115,7 @@ Items inside [square brackets] should be named according to the project being wo
     - Extra JS: {% block postloadjs %}
 15. All blocks to include {% endblock %}
 
+
 # 4 Setup an App (Home in this example)
 
 ## 4.1 Basic Creation
@@ -149,6 +150,7 @@ Items inside [square brackets] should be named according to the project being wo
     - Go to project urls.py
     - in "urlpatterns" beneath existing paths add:
         path('', include('home.urls')),
+        path('products/', include('products.urls')),
 5. Add App to project settings and wire up template directories
     - Go to project settings.py
     - Under "INSTALLED_APPS" add '[home]'
@@ -183,6 +185,10 @@ If the app takes advantage of a database, additional actions are required.
         admin.site.register([model_name])
 6. Load the fixtures data
     python3 manage.py loaddata [fixture_jsonFile_name]
+
+## 4.5 Tidying the Database Admin
+
+Rewatch Products Set-up, Products Admin, 2nd Video in tutorials
 
 # 5 Setup Media & Static folders
 1. In project folder create a new sub-folder called "media"
