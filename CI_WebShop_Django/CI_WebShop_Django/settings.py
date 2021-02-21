@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount',  # Allows users to log in via external sites like FB or Google
     'home',
     'products',
+    'bag',
 ]
 
 MIDDLEWARE = [
