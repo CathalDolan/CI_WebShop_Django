@@ -231,3 +231,24 @@ There is an option to create aFontawesome account. In this instance we'll use a 
     1. Go to https://www.codegrepper.com/code-examples/whatever/font+awesome+cdn
     2. Copy the latest or your preferred link
     3. Insert it immediately beneath the fonts link within the "corecss" blocks
+
+
+# 7 Manipulate the Database from CLI using Shell - Update Products enmasse
+This allows us to change the database from the terminal window. It is configured to our settings.py file
+so can act just like us writing code in a view.
+1. Open Shell
+    python3 manage.py shell
+2. Import area to be edited
+    from [app_name].models impor [App_name]
+3. Create a variable for items not to be included
+    [var_name] = ['category', 'category_too']
+4. Exclude the items in the var
+    [var_name_too] = [App_name].objects.exclude(category__name__in=[var_name])
+5. Run a for loop to find all products to be updated
+    for x in [var_name_too]
+        x.has_sizes = True
+        x.save()
+        Hit return key again
+6. Run a count 
+    [Var_name].objects.filter([db_filed_name]=True).count()
+7. Exit shell   exit()
