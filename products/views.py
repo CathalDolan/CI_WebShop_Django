@@ -39,6 +39,7 @@ def all_products(request):
         if 'q' in request.GET:
             query = request.GET['q']
             if not query:
+                # Connected with "except Exception as e:" in bag views.py
                 messages.error(request, "You didn't enter any search criteria!")
                 return redirect(reverse('products'))
 
