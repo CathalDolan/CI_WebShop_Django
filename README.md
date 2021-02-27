@@ -186,8 +186,9 @@ If the app takes advantage of a database, additional actions are required.
     - Go to App admin.py file
     - Import the relevant mnodel
         from .models import [model_name]
-    - Register it
+    - Register it. This goes at the end of the page
         admin.site.register([model_name])
+
 6. Load the fixtures data
     python3 manage.py loaddata [fixture_jsonFile_name]
 

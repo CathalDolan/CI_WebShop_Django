@@ -37,6 +37,7 @@ class Order(models.Model):
 
     # Aggregate allows us to update the total using "Sum()"
     # All line items are totalled first and then the delivery calculated
+    # This fn is called from "signal.py"
     def update_total(self):
 
         self.order_total = self.lineitems.aggregate(Sum('lineitem_total'))['lineitem_total__sum'] # How does this work?
