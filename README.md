@@ -123,6 +123,11 @@ Items inside [square brackets] should be named according to the project being wo
     python3 manage.py startapp [home]
 2. Create a templates directory within the new app:
     mkdir -p [home]/templates/[home]
+3. Add the app name to App settings.py
+    - Open App settings.py
+    - Go to "INSTALLED_APPS" section
+    - Add the new app name to the bottom of the list
+        - Encase in single strokes and put a comma at the end: e.g. 'home',
 
 ## 4.2 Create basic html page
 1. Create home/index html file within inner app "[home]" folder
