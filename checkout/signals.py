@@ -12,5 +12,5 @@ def update_on_save(sender, instance, created, **kwargs):
 
 # Called everytime the "OrderLineItem" model class is deleted and saved
 @receiver(post_delete, sender=OrderLineItem)
-def update_on_save(sender, instance, **kwargs):
+def update_on_delete(sender, instance, **kwargs):
     instance.order.update_total() 
