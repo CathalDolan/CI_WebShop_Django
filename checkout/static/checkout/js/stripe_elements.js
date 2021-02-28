@@ -1,4 +1,3 @@
-  
 /*
     Core logic/payment flow for this comes from here:
     https://stripe.com/docs/payments/accept-a-payment
@@ -6,14 +5,10 @@
     https://stripe.com/docs/stripe-js
 */
 
-/* Taken from App views.py. Slices remove the quotes */
 var stripePublicKey = $('#id_stripe_public_key').text().slice(1, -1);
 var clientSecret = $('#id_client_secret').text().slice(1, -1);
-
-/* This sets up Stripe */
 var stripe = Stripe(stripePublicKey);
 var elements = stripe.elements();
-/* Used to style the card below. Taken from Stripe's JS Docs */
 var style = {
     base: {
         color: '#000',
@@ -30,11 +25,9 @@ var style = {
     }
 };
 var card = elements.create('card', {style: style});
-/* Injects the fields into the html */
 card.mount('#card-element');
 
-/* Handles realtime validation errors on the card element */
-/* Error messages created by Stripe */
+// Handle realtime validation errors on the card element
 card.addEventListener('change', function (event) {
     var errorDiv = document.getElementById('card-errors');
     if (event.error) {
@@ -54,41 +47,84 @@ card.addEventListener('change', function (event) {
 var form = document.getElementById('payment-form');
 
 form.addEventListener('submit', function(ev) {
-    /* Prevents the default POST action from happening */
+    /* 1. When User clicks Submit we prevent the form from submitting */ 
     ev.preventDefault();
-    /* This executes instead */
+    /* 2. Card is disabled */
     card.update({ 'disabled': true});
-    /* This prevents multiple submissions */
     $('#submit-button').attr('disabled', true);
-    /* Trigger the loader spinner when Submit buttyon is clicked */
     $('#payment-form').fadeToggle(100);
+    /* 3 Overlay for spinner is triggered */
     $('#loading-overlay').fadeToggle(100);
-    /* Call fn for payment intent call to Stripe */
-    stripe.confirmCardPayment(clientSecret, {
-        payment_method: {
-            card: card,
-        }
-    }).then(function(result) {
-        if (result.error) {
-            /* If there is an error, a notification displays */
-            var errorDiv = document.getElementById('card-errors');
-            var html = `
-                <span class="icon" role="alert">
-                <i class="fas fa-times"></i>
-                </span>
-                <span>${result.error.message}</span>`;
-            $(errorDiv).html(html);
-            /* Reverses the spinner and overlay if there is an error */
-            $('#payment-form').fadeToggle(100);
-            $('#loading-overlay').fadeToggle(100);
-            /* Where an error happens, the field and btn are re-enabled so User can fix error */
-            card.update({ 'disabled': false});
-            $('#submit-button').attr('disabled', false);
-        } else {
-            /* If payment intent is returned without issue, the form is submitted */
-            if (result.paymentIntent.status === 'succeeded') {
-                form.submit();
+
+    /*4 Variable created to capture form data */
+    var saveInfo = Boolean($('#id-save-info').attr('checked'));
+    // From using {% csrf_token %} in the form
+    var csrfToken = $('input[name="csrfmiddlewaretoken"]').val();
+    var postData = {
+        'csrfmiddlewaretoken': csrfToken,
+        'client_secret': clientSecret,
+        'save_info': saveInfo,
+    };
+    var url = '/checkout/cache_checkout_data/';
+
+    /* 5 Captured form data is posted here to the cache_checkout_data view */
+    $.post(url, postData).done(function () {
+        /*6 The View updates the payment intent. If 200 response returned... */
+        stripe.confirmCardPayment(clientSecret, {
+            payment_method: {
+                card: card,
+                billing_details: {
+                    name: $.trim(form.full_name.value),
+                    phone: $.trim(form.phone_number.value),
+                    email: $.trim(form.email.value),
+                    address:{
+                        line1: $.trim(form.street_address1.value),
+                        line2: $.trim(form.street_address2.value),
+                        city: $.trim(form.town_or_city.value),
+                        country: $.trim(form.country.value),
+                        state: $.trim(form.county.value),
+                    }
+                }
+            },
+            shipping: {
+                name: $.trim(form.full_name.value),
+                phone: $.trim(form.phone_number.value),
+                address: {
+                    line1: $.trim(form.street_address1.value),
+                    line2: $.trim(form.street_address2.value),
+                    city: $.trim(form.town_or_city.value),
+                    country: $.trim(form.country.value),
+                    postal_code: $.trim(form.postcode.value),
+                    state: $.trim(form.county.value),
+                }
+            },
+        }).then(function(result) {
+            if (result.error) {
+                var errorDiv = document.getElementById('card-errors');
+                var html = `
+                    <span class="icon" role="alert">
+                    <i class="fas fa-times"></i>
+                    </span>
+                    <span>${result.error.message}</span>`;
+                /* 10... an error is displayed to the User. */
+                $(errorDiv).html(html);
+                $('#payment-form').fadeToggle(100);
+                /* 8 If there's an error, the overlay is hidden... */
+                $('#loading-overlay').fadeToggle(100);
+                /* 9 ...the card element will be re-enabled and... */
+                card.update({ 'disabled': false});
+                $('#submit-button').attr('disabled', false);
+            } else {
+                if (result.paymentIntent.status === 'succeeded') {
+                    /* 7... We submit the form */
+                    form.submit();
+                }
             }
-        }
-    });
+        });
+    }).fail(function () {
+        /* 11 If there is ever an issue posting to the cache_checkout_data view,
+        the page wiull reload, without charging the user, and the error will
+        be displayed (from django mnesages) */
+        location.reload();
+    })
 });
