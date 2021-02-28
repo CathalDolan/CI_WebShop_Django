@@ -15,6 +15,7 @@
 {% endblock %}
 
 {% block content %}
+    <!-- This overlay is for the spinner -->
     <div class="overlay"></div>
     <div class="container">
         <div class="row">
@@ -118,7 +119,7 @@
 
                     <!-- Payment Section -->
                     <fieldset class="px-3">
-                        <legend class="fieldset-label small text-black px-2 w-auto">Payment - Test Card 4242 4242 4242 4242</legend>
+                        <legend class="fieldset-label small text-black px-2 w-auto">Payment - Test Card 4242 4242 4242 4242 / 4000 0025 0000 3155</legend>
                         <!-- A Stripe card element will go here, injected via stripe_elements.js -->
                         <div class="mb-3" id="card-element"></div>
 
@@ -152,6 +153,14 @@
                 </form>
             </div>
         </div>
+    </div>
+    <!-- Spinner. Works with checkout CSS and stripe_elements.js -->
+    <div id="loading-overlay">
+        <h1 class="text-light logo-font loading-spinner">
+            <span class="icon">
+                <i class="fas fa-3x fa-sync-alt fa-spin"></i>
+            </span>
+        </h1>
     </div>
 {% endblock %}
 
