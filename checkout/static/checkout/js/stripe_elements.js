@@ -57,9 +57,11 @@ form.addEventListener('submit', function(ev) {
     $('#loading-overlay').fadeToggle(100);
 
     /*4 Variable created to capture form data */
+    /* Checks the "Save Info" check box attribute to see if checked or not */
     var saveInfo = Boolean($('#id-save-info').attr('checked'));
     // From using {% csrf_token %} in the form
     var csrfToken = $('input[name="csrfmiddlewaretoken"]').val();
+    /* Object creatred so we can pass the data to the view */
     var postData = {
         'csrfmiddlewaretoken': csrfToken,
         'client_secret': clientSecret,
@@ -67,7 +69,8 @@ form.addEventListener('submit', function(ev) {
     };
     var url = '/checkout/cache_checkout_data/';
 
-    /* 5 Captured form data is posted here to the cache_checkout_data view */
+    /* 5 Captured form data from above is posted here to the cache_checkout_data view.
+        .done(function() allows us wait for a response that payment intent was updated */
     $.post(url, postData).done(function () {
         /*6 The View updates the payment intent. If 200 response returned... */
         stripe.confirmCardPayment(clientSecret, {

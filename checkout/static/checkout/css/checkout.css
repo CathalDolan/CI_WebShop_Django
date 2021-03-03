@@ -36,6 +36,18 @@
     border: 1px solid #000;
 }
 
+/* For country dropdown on Checkout Page */
+select, 
+select option {
+    color: #000000;
+}
+
+select:invalid,
+select option[value=""] {
+    color: #aab7c4 !important
+}
+
+
 /* Spinner */
 #loading-overlay {
 	display: none;

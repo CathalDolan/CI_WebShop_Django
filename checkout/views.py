@@ -52,8 +52,15 @@ def checkout(request):
 
         # If the form is valid...
         if order_form.is_valid():
-            #...we save it
-            order = order_form.save()
+            #...we save it. "commit=False" prevents multiple saves
+            order = order_form.save(commit=False)
+
+            # Gets the client secret from the hidden form in html
+            pid = request.POST.get('client_secret').split('_secret')[0]
+            order.stripe_pid = pid
+
+            order.original_bag = json.dumps(bag)
+            order.save()
 
             # Iterate through the bag items
             for item_id, item_data in bag.items():
@@ -114,7 +121,7 @@ def checkout(request):
             amount=stripe_total,
             currency=settings.STRIPE_CURRENCY,
         )
-
+        print(f"VIEW INTENT: {intent}")
         order_form = OrderForm()
 
     # Developer alert if forget to set public key
