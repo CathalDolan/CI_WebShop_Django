@@ -10,6 +10,7 @@ from django.conf import settings
 from django_countries.fields import CountryField
 
 from products.models import Product
+from profiles.models import UserProfile
 
 
 # This is the overall order
@@ -17,6 +18,8 @@ class Order(models.Model):
     # All fields are required except postcode & county (null=True, blank=True)
     # Order no. will be automatically created with "uuid". It's not editable
     order_number = models.CharField(max_length=32, null=False, editable=False)
+    user_profile = models.ForeignKey(UserProfile, on_delete=models.SET_NULL,
+                                     null=True, blank=True, related_name='orders')
     full_name = models.CharField(max_length=50, null=False, blank=False)
     email = models.EmailField(max_length=254, null=False, blank=False)
     phone_number = models.CharField(max_length=20, null=False, blank=False)

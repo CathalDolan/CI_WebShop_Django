@@ -130,7 +130,7 @@ Items inside [square brackets] should be named according to the project being wo
         - Encase in single strokes and put a comma at the end: e.g. 'home',
 
 ## 4.2 Create basic html page
-1. Create home/index html file within inner app "[home]" folder
+1. Create [home/index].html file within inner app "[home]" folder
 2. In new file, add extend and load blocks at the top of the page
     - {% extends "base.html" %}
     - {% load static %}
