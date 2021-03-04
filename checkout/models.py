@@ -18,6 +18,8 @@ class Order(models.Model):
     # All fields are required except postcode & county (null=True, blank=True)
     # Order no. will be automatically created with "uuid". It's not editable
     order_number = models.CharField(max_length=32, null=False, editable=False)
+    # models.SET_NULL allows us to keep the order details even if the user is deleted
+    # Making it null & blank True allows annonymous purchases
     user_profile = models.ForeignKey(UserProfile, on_delete=models.SET_NULL,
                                      null=True, blank=True, related_name='orders')
     full_name = models.CharField(max_length=50, null=False, blank=False)

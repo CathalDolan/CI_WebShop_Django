@@ -13,7 +13,7 @@ class UserProfile(models.Model):
     A user profile model for maintaining default
     delivery information and order history
     """
-    # OneToOne dictates each profile can opnly one user and vice versa
+    # OneToOne dictates each profile can only have one user and vice versa
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     # Fields below taken from Checkout models "Order"
     default_phone_number = models.CharField(max_length=20, null=True, blank=True)
